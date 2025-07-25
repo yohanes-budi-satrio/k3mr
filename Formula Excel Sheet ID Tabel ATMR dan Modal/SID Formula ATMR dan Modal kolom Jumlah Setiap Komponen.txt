@@ -1,0 +1,207 @@
+=IF(COUNTIFS([SCoT],(VALUE(LEFT([@SCoT],4))-1)&"0131")=0,"",
+IF([@[Reff 2]]="ATMR_16",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        (NK[Jns. Agunan ATMR]="203") *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF([@[Reff 2]]="ATMR_17",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        ((NK[Jns. Usaha]="Mikro") + (NK[Jns. Usaha]="Kecil")) *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    )
+    -
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        ((NK[Jns. Usaha]="Mikro") + (NK[Jns. Usaha]="Kecil")) *
+        ((NK[Jns. Agunan ATMR]="101") + (NK[Jns. Agunan ATMR]="102") + (NK[Jns. Agunan ATMR]="103") + (NK[Jns. Agunan ATMR]="201") + (NK[Jns. Agunan ATMR]="202") + (NK[Jns. Agunan ATMR]="203")) *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF([@[Reff 2]]="ATMR_2",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        ((NK[Jns. Usaha]="Menengah") + (NK[Jns. Usaha]="SELAIN USAHA MIKRO,KECIL DAN MENENGAH")) *
+        (NK[Jns. Agunan ATMR]="212") *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF([@[Reff 2]]="ATMR_18",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        ((NK[Jns. Usaha]="Menengah") + (NK[Jns. Usaha]="SELAIN USAHA MIKRO,KECIL DAN MENENGAH")) *
+        ((NK[Jns. Agunan ATMR]="213")+(NK[Jns. Agunan ATMR]="299")) *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF([@[Reff 2]]="ATMR_20",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]<= [@[Tgl.]]) *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF([@[Reff 2]]="ATMR_21",
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]> [@[Tgl.]]) *
+        (NK[Kolek Sekarang]=5) *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF(OR([@[Reff 2]]="ATMR_25",[@[Reff 2]]="ATMR_38"),
+    SUMPRODUCT(
+        (NK[Modul]="Kredit") *
+        (NK[SCoT]=[@SCoT]) *
+        (NK[Tgl. JT]>[@[Tgl.]]) *
+        (NK[Kolek Sekarang]<>5) *
+        (NK[Jns. Agunan ATMR]="202") *
+        (NK[OS] + NK[Nilai Adjustment Flat])
+    ),
+
+IF(OR(
+       [@[Reff 2]]="ATMR_4",[@[Reff 2]]="ATMR_5",[@[Reff 2]]="ATMR_6",[@[Reff 2]]="ATMR_7",
+       [@[Reff 2]]="ATMR_8",[@[Reff 2]]="ATMR_9",[@[Reff 2]]="ATMR_10",[@[Reff 2]]="ATMR_11",
+       [@[Reff 2]]="ATMR_12",[@[Reff 2]]="ATMR_13",[@[Reff 2]]="ATMR_14",[@[Reff 2]]="ATMR_15",
+       [@[Reff 2]]="ATMR_19",[@[Reff 2]]="ATMR_22",[@[Reff 2]]="ATMR_23"
+   ), 0,
+
+IF(AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",
+       ISNUMBER(MATCH([@[Reff 2]],
+         {"ATMR_27","ATMR_28","ATMR_29","ATMR_30","ATMR_31","ATMR_32","ATMR_33","ATMR_34","ATMR_35","ATMR_36","ATMR_37","ATMR_39","ATMR_40","ATMR_41"},0)
+       )
+   ), 0,
+
+IF(AND([@[Dasar Ketentuan]]="24/SEOJK.03/2019",
+       ISNUMBER(MATCH([@[Reff 2]],{"ATMR_1","ATMR_24"},0))
+   ), 0,
+
+IF([@[Reff 2]]="ATMR_3",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"1100000000"),
+
+IF(OR(
+       AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",[@[SCoT]]>20250430,[@[Reff 2]]="ATMR_42")
+   ),
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="1000000000") - (LK[CoA]="1100000000") - (LK[CoA]="1140100000") - (LK[CoA]="1141000000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF(OR(
+       AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",[@[SCoT]]<20250531,[@[Reff 2]]="ATMR_42"),
+       AND([@[Dasar Ketentuan]]="24/SEOJK.03/2019",[@[Reff 2]]="ATMR_26")
+   ),
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="1000000000") - (LK[CoA]="1100000000") - (LK[CoA]="1140100000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF([@[Reff 2]]="MI_2",
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="3501000000") + (LK[CoA]="3502000000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF([@[Reff 2]]="MI_4",
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="3503000000") + (LK[CoA]="3504000000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF([@[Reff 2]]="MI_5",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"3505000000"),
+
+IF([@[Reff 2]]="MI_6",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"3510000000"),
+
+IF([@[Reff 2]]="MI_7",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"3541000000"),
+
+IF([@[Reff 2]]="MI_8",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"3542000000"),
+
+IF([@[Reff 2]]="MI_9",
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="3543000000") + (LK[CoA]="3544000000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF([@[Reff 2]]="MI_10",
+    SUMPRODUCT(
+        (LK[SCoT]=[@SCoT]) *
+        ((LK[CoA]="3545000000") - (LK[CoA]="3546000000")) *
+        LK[Saldo Akhir]
+    ),
+
+IF([@[Reff 2]]="MI_11",
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"1270330000"),
+
+IF(OR([@[Reff 2]]="MI_1",[@[Reff 2]]="MI_3",[@[Reff 2]]="MI_12",[@[Reff 2]]="MI_13",[@[Reff 2]]="MI_14",[@[Reff 2]]="MI_15",[@[Reff 2]]="MI_16",[@[Reff 2]]="MI_17",[@[Reff 2]]="MI_18",[@[Reff 2]]="MI_24"),
+    0,
+
+IF(OR([@[Reff 2]]="MP_1",[@[Reff 2]]="MP_2",[@[Reff 2]]="MP_3"),
+    0,
+
+IF(AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_25","MI_26","MI_27","MI_28","MI_29","MI_30"},0))
+   ), 0,
+
+IF(AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",[@[SCoT]]>20250430,
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_31"},0))
+   ),
+    MAX(
+        SUMIFS(NK[Nilai CKPN],NK[Modul],"Kredit",NK[SCoT],[@SCoT]) -
+        SUMIFS(NK[Cad. PPKA],NK[Modul],"Kredit",NK[SCoT],[@SCoT]),
+        0
+    ),
+
+IF(AND([@[Dasar Ketentuan]]="2/SEOJK.03/2025",
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_31"},0))
+   ), 0,
+
+IF(AND([@[Dasar Ketentuan]]="24/SEOJK.03/2019",
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_19","MI_22","MI_23"},0))
+   ), 0,
+
+IF(AND([@[Dasar Ketentuan]]="24/SEOJK.03/2019",
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_21"},0))
+   ),
+    SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"2470030000"),
+
+IF(AND([@[Dasar Ketentuan]]="24/SEOJK.03/2019",
+       ISNUMBER(MATCH([@[Reff 2]],{"MI_20"},0))
+   ),
+    IF(
+        SUMIFS(NK[Cad. PPKA],NK[SCoT],[@SCoT],NK[Modul],"Kredit") >
+        SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"1141000000"),
+        SUMIFS(NK[Cad. PPKA],NK[SCoT],[@SCoT],NK[Modul],"Kredit") -
+        SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"1141000000"),
+        SUMIFS(LK[Saldo Akhir],LK[SCoT],[@SCoT],LK[CoA],"1141000000")
+    ),
+
+"RUMUS"
+)))))))))))))))))))))))))))))))
